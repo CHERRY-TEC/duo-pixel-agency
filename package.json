@@ -6,7 +6,8 @@
   "description": "Duo Pixel Agency — book a custom website design from one of two designers.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build && vite build --config vite.site.config.ts && vite build --config vite.portal.config.ts",
+    "build": "node scripts/build.mjs",
+    "build:all": "tsc --noEmit -p tsconfig.json && vite build && vite build --config vite.site.config.ts && vite build --config vite.portal.config.ts",
     "build:site": "tsc --noEmit -p tsconfig.json && vite build --config vite.site.config.ts",
     "build:portal": "tsc --noEmit -p tsconfig.json && vite build --config vite.portal.config.ts",
     "preview": "vite preview --port 4173",

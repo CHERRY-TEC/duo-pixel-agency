@@ -259,39 +259,47 @@ shown on the login screen:
 
 ## Deployment
 
-### Option A — one domain (default, recommended)
+### Vercel — two separate websites (the current setup)
 
-Both apps ship in a single `dist/`: the website at `/` and the portal behind `/login`,
-`/signup`, `/track`, `/account/*` and `/dashboard/*`.
+The two apps deploy as **two Vercel projects created from this one repo**, each with its
+own URL:
+
+| Website | Vercel project | Production URL | `APP_TARGET` | Cross-link env var |
+| --- | --- | --- | --- | --- |
+| Public website | `duo-pixel-agency` | `https://duo-pixel-agency.vercel.app` | `site` | `VITE_PORTAL_URL=https://duo-pixel-portal.vercel.app` |
+| Client & designer portal | `duo-pixel-portal` | `https://duo-pixel-portal.vercel.app` | `portal` | `VITE_SITE_URL=https://duo-pixel-agency.vercel.app` |
+
+`APP_TARGET` is a **project env var (Production)** on each project. It tells
+[`scripts/build.mjs`](scripts/build.mjs) which single app to build into Vercel's default
+`dist/` output directory, so both projects keep the default build command (`npm run build`)
+and output directory — no custom build settings needed. The `VITE_*_URL` values point each
+app at the other one and are baked in at build time.
+
+```bash
+# the local repo is linked to one project at a time; switch, then deploy
+vercel link --yes --project duo-pixel-agency   # or duo-pixel-portal
+vercel env add APP_TARGET production --value site --yes     # site / portal
+vercel --prod
+```
+
+> **Two domains don't share demo data.** `localStorage` is per-origin, so a booking made on
+> the website is not visible to the portal until you connect **Supabase** (see above). That
+> is expected — they are genuinely separate sites.
+
+### One domain (combined build)
+
+Both apps can also ship in a single `dist/`: the website at `/` and the portal behind
+`/login`, `/signup`, `/track`, `/account/*` and `/dashboard/*`.
 
 ```bash
 npm run build          # dist/ (both apps) + dist/site + dist/portal
-vercel --prod          # or: firebase deploy --only hosting
+firebase deploy --only hosting   # or any static host
 ```
 
-[`vercel.json`](vercel.json) and [`firebase.json`](firebase.json) already contain the portal
+[`vercel.json`](vercel.json) and [`firebase.json`](firebase.json) contain the portal
 rewrites, the SPA fallback and immutable asset caching. Leave `VITE_PORTAL_URL` and
-`VITE_SITE_URL` **empty** — everything is same-origin, so localStorage demo mode keeps working
-even without Supabase.
-
-### Option B — two separate domains
-
-Build each app on its own and point them at each other:
-
-```bash
-# website project          → dist/site
-# portal project           → dist/portal
-npm run build:site
-npm run build:portal
-```
-
-| Project | Build command | Output directory | Env vars |
-| --- | --- | --- | --- |
-| Public website | `npm run build:site` | `dist/site` | `VITE_PORTAL_URL=https://app.yourdomain.com` |
-| Portal | `npm run build:portal` | `dist/portal` | `VITE_SITE_URL=https://yourdomain.com` |
-
-Each variable holds the **other** app's origin. Because the two domains no longer share
-`localStorage`, **Supabase is required** in this mode.
+`VITE_SITE_URL` **empty** — everything is same-origin, so localStorage demo mode keeps
+working even without Supabase.
 
 ### Firebase Hosting (single domain)
 
@@ -305,10 +313,13 @@ firebase deploy --only hosting
 
 ### After deploying
 
-- Set the production `VITE_*` values on the host, then rebuild.
-- Add **both** production URLs to Supabase **Authentication → Redirect URLs**.
-- Point your domain at the host and update `VITE_SITE_URL` / `VITE_PORTAL_URL` if you split
-  the apps across two domains.
+- **Vercel:** set env vars while linked to the right project
+  (`vercel link --yes --project <name>`, then `vercel env add <name> production --value <value>`),
+  then `vercel --prod`.
+- Add **both** production URLs to Supabase **Authentication → Redirect URLs** (once Supabase
+  is connected).
+- Custom domains: attach each domain to its Vercel project and keep `VITE_SITE_URL` /
+  `VITE_PORTAL_URL` pointing at each other's origin, then redeploy both.
 
 ---
 
@@ -320,6 +331,7 @@ firebase deploy --only hosting
 | `VITE_SUPABASE_ANON_KEY` | for production | Supabase anon key |
 | `VITE_SITE_URL` | only if split | The **portal's** origin when the apps live on two domains (leave empty for one origin) |
 | `VITE_PORTAL_URL` | only if split | The **website's** origin when the apps live on two domains (leave empty for one origin) |
+| `APP_TARGET` | Vercel only | `site` or `portal` — which single app `npm run build` produces (set per Vercel project) |
 | `VITE_EMAIL_FUNCTION_URL` | optional | Edge function that sends confirmation email |
 | `VITE_WHATSAPP_NUMBER` | recommended | Agency WhatsApp number (E.164, no `+`) |
 | `VITE_CONTACT_EMAIL` | recommended | Public contact email |
