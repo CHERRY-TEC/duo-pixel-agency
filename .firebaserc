@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "YOUR_FIREBASE_PROJECT_ID",
+    "hosting": {
+      "site": "YOUR_FIREBASE_PROJECT_ID"
+    }
+  }
+}

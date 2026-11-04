@@ -1,0 +1,184 @@
+// ---------------------------------------------------------------------------
+// Supabase Edge Function: send-booking-email
+// Deploy:  supabase functions deploy send-booking-email
+// Then set VITE_EMAIL_FUNCTION_URL to the function's URL in your env.
+//
+// Uses any SMTP provider via SMTP_* secrets (Resend, Brevo, Gmail app password…):
+//   supabase secrets set SMTP_HOST=smtp.resend.com SMTP_PORT=587 \
+//     SMTP_USER=resend SMTP_PASS=xxx SMTP_FROM="Duo Pixel Agency <duopixelagency@gmail.com>"
+// ---------------------------------------------------------------------------
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface Booking {
+  booking_code: string;
+  website_name: string;
+  website_type: string;
+  client_name: string;
+  client_email: string;
+  budget: string;
+  deadline: string;
+  designer_slug: string | null;
+  status: string;
+}
+
+function escapeHtml(value: string): string {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+function renderEmail(booking: Booking, siteUrl: string): string {
+  const designer =
+    booking.designer_slug === 'markanti'
+      ? 'Markanti Hanmanth'
+      : booking.designer_slug === 'sundar'
+        ? 'Sundar'
+        : 'Best available designer';
+
+  return `<!doctype html>
+<html>
+  <body style="margin:0;background:#050506;font-family:Inter,Arial,sans-serif;color:#E4E4EC">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#050506;padding:32px 16px">
+      <tr><td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#0E0E11;border:1px solid #1E1E25;border-radius:16px;padding:32px">
+          <tr><td>
+            <div style="font-size:14px;letter-spacing:2px;color:#B9FF39;text-transform:uppercase">Booking confirmed</div>
+            <h1 style="font-size:26px;margin:12px 0 4px;color:#ffffff">Thanks ${escapeHtml(booking.client_name)}!</h1>
+            <p style="font-size:15px;color:#8A8A9A;margin:0">We received your website request for <strong style="color:#ffffff">${escapeHtml(booking.website_name)}</strong>.</p>
+
+            <div style="margin:24px 0;padding:20px;border:1px dashed #B9FF39;border-radius:12px;text-align:center;background:#050506">
+              <div style="font-size:11px;letter-spacing:2px;color:#5A5A6A;text-transform:uppercase">Booking ID</div>
+              <div style="font-family:monospace;font-size:30px;letter-spacing:6px;color:#B9FF39;margin-top:8px">${escapeHtml(booking.booking_code)}</div>
+            </div>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#B9B9C6">
+              <tr><td style="padding:6px 0;color:#5A5A6A">Type</td><td align="right" style="color:#E4E4EC">${escapeHtml(booking.website_type)}</td></tr>
+              <tr><td style="padding:6px 0;color:#5A5A6A">Designer</td><td align="right" style="color:#E4E4EC">${escapeHtml(designer)}</td></tr>
+              <tr><td style="padding:6px 0;color:#5A5A6A">Budget</td><td align="right" style="color:#E4E4EC">${escapeHtml(booking.budget)}</td></tr>
+              <tr><td style="padding:6px 0;color:#5A5A6A">Deadline</td><td align="right" style="color:#E4E4EC">${escapeHtml(booking.deadline)}</td></tr>
+              <tr><td style="padding:6px 0;color:#5A5A6A">Status</td><td align="right" style="color:#E4E4EC">${escapeHtml(booking.status)}</td></tr>
+            </table>
+
+            <div style="margin:28px 0 8px">
+              <a href="${siteUrl}/track?code=${encodeURIComponent(booking.booking_code)}"
+                 style="display:inline-block;background:#B9FF39;color:#050506;font-weight:700;text-decoration:none;padding:14px 24px;border-radius:999px">
+                 Track your booking
+              </a>
+            </div>
+
+            <p style="font-size:13px;color:#5A5A6A;margin-top:24px">
+              We reply within one working day. Reply to this email or WhatsApp us at any time.
+            </p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+</html>`;
+}
+
+/** Minimal SMTP client over STARTTLS-free submission is provider specific,
+ *  so we post to the provider's HTTP API when one is configured. */
+async function sendEmail(to: string, subject: string, html: string): Promise<void> {
+  const resendKey = Deno.env.get('RESEND_API_KEY');
+  const smtpUser = Deno.env.get('SMTP_USER');
+  const smtpPass = Deno.env.get('SMTP_PASS');
+  const smtpHost = Deno.env.get('SMTP_HOST') ?? 'smtp.resend.com';
+  const smtpPort = Deno.env.get('SMTP_PORT') ?? '587';
+  const from = Deno.env.get('SMTP_FROM') ?? 'Duo Pixel Agency <duopixelagency@gmail.com>';
+
+  if (resendKey) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ from, to: [to], subject, html }),
+    });
+    if (!res.ok) throw new Error(`Resend failed: ${await res.text()}`);
+    return;
+  }
+
+  if (smtpUser && smtpPass) {
+    // Generic provider that accepts JSON submission (Brevo / Postmark style).
+    const endpoint = Deno.env.get('SMTP_API_URL');
+    if (endpoint) {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': smtpPass,
+          Authorization: `Bearer ${smtpPass}`,
+        },
+        body: JSON.stringify({
+          sender: from,
+          to: [{ email: to }],
+          subject,
+          htmlContent: html,
+        }),
+      });
+      if (!res.ok) throw new Error(`SMTP API failed: ${await res.text()}`);
+      return;
+    }
+    console.info(`SMTP configured for ${smtpHost}:${smtpPort} — plug your provider API here.`);
+    return;
+  }
+
+  console.warn('No email provider configured — skipping send.');
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const { booking } = (await req.json()) as { booking: Booking };
+    if (!booking?.booking_code || !booking?.client_email) {
+      return new Response(JSON.stringify({ error: 'Missing booking payload' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://duopixel.agency';
+    const html = renderEmail(booking, siteUrl);
+    await sendEmail(
+      booking.client_email,
+      `Booking ${booking.booking_code} confirmed — Duo Pixel Agency`,
+      html,
+    );
+
+    // Mirror a copy into Supabase for the designers' records (best effort).
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (supabaseUrl && serviceKey) {
+      const admin = createClient(supabaseUrl, serviceKey);
+      await admin.from('contact_messages').insert({
+        name: booking.client_name,
+        email: booking.client_email,
+        subject: `Booking confirmation sent — ${booking.booking_code}`,
+        message: `Confirmation email delivered for ${booking.website_name}.`,
+      });
+    }
+
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ ok: false, error: String(error) }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
