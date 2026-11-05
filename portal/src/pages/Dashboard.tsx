@@ -30,7 +30,7 @@ import {
   updatePackage,
   watchBookings,
 } from '@/lib/db';
-import { cx, daysAgo, formatDate, inr } from '@/lib/format';
+import { cx, daysAgo, formatDate } from '@/lib/format';
 import { useDesigners, usePackages, useReviews } from '@/lib/useDesigners';
 import { siteUrl } from '@/lib/links';
 import type { Booking, BookingStatus, Designer, Package } from '@/lib/types';
@@ -254,7 +254,7 @@ function ProfileTab({ designer }: { designer: Designer }) {
           <p className="mt-3 font-display text-lg font-bold text-white">{designer.name}</p>
           <p className="text-sm text-accent">{designer.title}</p>
           <p className="mt-2 text-xs text-ink-400">
-            {inr(designer.starting_price)} starting · {designer.avg_delivery_days} day average
+            {designer.avg_delivery_days} day average delivery
           </p>
           <a href={siteUrl(`/designer/${designer.slug}`)} className="btn-ghost mt-4 w-full !py-2.5">
             View public page <ArrowUpRight size={15} />

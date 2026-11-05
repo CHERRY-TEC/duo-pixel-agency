@@ -336,7 +336,7 @@ export default function Book() {
                           opt.slug === null
                             ? 'We match you based on website type and availability — usually the faster option.'
                             : d
-                              ? `${d.title} · starts ${inr(d.starting_price)} · ~${d.avg_delivery_days} days · ${d.availability}`
+                              ? `${d.title} · ~${d.avg_delivery_days} days · ${d.availability}`
                               : undefined
                         }
                         icon={

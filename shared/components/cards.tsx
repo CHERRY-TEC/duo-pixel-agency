@@ -4,7 +4,6 @@ import {
   Check,
   ChevronDown,
   Clock,
-  IndianRupee,
   MapPin,
   Star,
 } from 'lucide-react';
@@ -61,11 +60,7 @@ export function DesignerCard({ designer }: { designer: Designer }) {
           )}
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-2 border-t border-ink-700 pt-4 text-center">
-          <div>
-            <p className="font-display text-base font-bold text-white">{inr(designer.starting_price)}</p>
-            <p className="text-[10px] uppercase tracking-wider text-ink-400">Starting</p>
-          </div>
+        <div className="mt-5 grid grid-cols-2 gap-2 border-t border-ink-700 pt-4 text-center">
           <div>
             <p className="font-display text-base font-bold text-white">{designer.avg_delivery_days}d</p>
             <p className="text-[10px] uppercase tracking-wider text-ink-400">Avg delivery</p>
@@ -317,10 +312,6 @@ export function ServiceCard({ service, index = 0 }: { service: Service; index?: 
 export function AvailabilityRow({ designer }: { designer: Designer }) {
   return (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-300">
-      <span className="inline-flex items-center gap-1.5">
-        <IndianRupee size={14} className="text-accent" />
-        Starts at <strong className="text-white">{inr(designer.starting_price)}</strong>
-      </span>
       <span className="inline-flex items-center gap-1.5">
         <Clock size={14} className="text-accent" />
         ~{designer.avg_delivery_days} day average delivery

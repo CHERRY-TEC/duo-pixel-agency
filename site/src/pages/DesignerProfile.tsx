@@ -125,19 +125,11 @@ export default function DesignerProfile() {
                 </span>
               ))}
             </div>
-            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-ink-700 pt-5 text-sm">
-              <div>
-                <p className="text-ink-400">Starting price</p>
-                <p className="mt-1 font-display text-lg font-bold text-white">
-                  ₹{new Intl.NumberFormat('en-IN').format(designer.starting_price)}
-                </p>
-              </div>
-              <div>
-                <p className="text-ink-400">Average delivery</p>
-                <p className="mt-1 font-display text-lg font-bold text-white">
-                  {designer.avg_delivery_days} days
-                </p>
-              </div>
+            <div className="mt-6 border-t border-ink-700 pt-5 text-sm">
+              <p className="text-ink-400">Average delivery</p>
+              <p className="mt-1 font-display text-lg font-bold text-white">
+                {designer.avg_delivery_days} days
+              </p>
             </div>
           </div>
         </Reveal>
