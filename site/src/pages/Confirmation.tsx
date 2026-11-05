@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Spinner } from '@/components/ui';
 import { getBookingByCode } from '@/lib/db';
-import { bookingWhatsAppMessage, mailto, whatsappLink } from '@/lib/format';
+import { mailto } from '@/lib/format';
 import { portalUrl } from '@/lib/links';
 import { AGENCY } from '@/lib/seed';
 import type { Booking, BookingFile } from '@/lib/types';
@@ -79,8 +79,6 @@ export default function Confirmation() {
     );
   }
 
-  const waHref = whatsappLink(AGENCY.whatsapp, bookingWhatsAppMessage(booking));
-
   return (
     <div className="container-x py-12 sm:py-16">
       <div className="mx-auto max-w-2xl">
@@ -138,9 +136,6 @@ export default function Confirmation() {
 
             {/* actions */}
             <div className="mt-6 flex flex-col gap-3">
-              <a href={waHref} target="_blank" rel="noreferrer" className="btn-primary w-full">
-                <MessageCircle size={17} /> Chat on WhatsApp
-              </a>
               <div className="grid gap-3 sm:grid-cols-2">
                 <a href={portalUrl(`/track?code=${booking.booking_code}`)} className="btn-ghost">
                   <Route size={16} /> Track booking
