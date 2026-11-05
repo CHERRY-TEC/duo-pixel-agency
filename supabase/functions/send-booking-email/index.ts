@@ -6,14 +6,43 @@
 // Uses any SMTP provider via SMTP_* secrets (Resend, Brevo, Gmail app password…):
 //   supabase secrets set SMTP_HOST=smtp.resend.com SMTP_PORT=587 \
 //     SMTP_USER=resend SMTP_PASS=xxx SMTP_FROM="Duo Pixel Agency <duopixelagency@gmail.com>"
+//
+// Security:
+//   * Only requests whose Origin is one of our own sites are accepted, so the
+//     function cannot be used by third parties as an email relay.
+//   * The booking must actually exist in the database (booking_code +
+//     client_email) before any email is sent.
+//   * Internal errors are logged server-side and never echoed to callers.
 // ---------------------------------------------------------------------------
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+/** Sites allowed to call this function. Override with ALLOWED_ORIGINS (comma separated). */
+const ALLOWED_ORIGINS = new Set(
+  (
+    Deno.env.get('ALLOWED_ORIGINS') ??
+      'https://duo-pixel-agency.vercel.app,https://duo-pixel-portal.vercel.app'
+  )
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+
+function allowedOrigin(req: Request): string | null {
+  const origin = req.headers.get('origin');
+  return origin && ALLOWED_ORIGINS.has(origin) ? origin : null;
+}
+
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = allowedOrigin(req);
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  };
+  if (origin) headers['Access-Control-Allow-Origin'] = origin;
+  return headers;
+}
 
 interface Booking {
   booking_code: string;
@@ -136,21 +165,60 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
   console.warn('No email provider configured — skipping send.');
 }
 
+function json(cors: Record<string, string>, status: number, body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, 'Content-Type': 'application/json' },
+  });
+}
+
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req);
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return allowedOrigin(req)
+      ? new Response('ok', { headers: cors })
+      : new Response('Forbidden', { status: 403 });
+  }
+
+  // Only our own websites may call this function (no Origin = not a browser
+  // on our site = rejected), which stops it being used as an open mail relay.
+  if (req.method !== 'POST' || !allowedOrigin(req)) {
+    return json(cors, 403, { error: 'Forbidden' });
   }
 
   try {
     const { booking } = (await req.json()) as { booking: Booking };
     if (!booking?.booking_code || !booking?.client_email) {
-      return new Response(JSON.stringify({ error: 'Missing booking payload' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return json(cors, 400, { error: 'Missing booking payload' });
     }
 
-    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://duopixel.agency';
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !serviceKey) {
+      console.error('SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not configured');
+      return json(cors, 503, { error: 'Email service unavailable' });
+    }
+
+    const admin = createClient(supabaseUrl, serviceKey);
+
+    // The booking must really exist before we send anything on its behalf.
+    const { data: existing, error: lookupError } = await admin
+      .from('bookings')
+      .select('booking_code')
+      .eq('booking_code', booking.booking_code)
+      .eq('client_email', booking.client_email)
+      .maybeSingle();
+    if (lookupError) {
+      console.error('Booking lookup failed', lookupError.message);
+      return json(cors, 503, { error: 'Email service unavailable' });
+    }
+    if (!existing) {
+      return json(cors, 404, { error: 'Unknown booking' });
+    }
+
+    const siteUrl =
+      Deno.env.get('SITE_URL') ?? 'https://duo-pixel-agency.vercel.app';
     const html = renderEmail(booking, siteUrl);
     await sendEmail(
       booking.client_email,
@@ -159,26 +227,17 @@ Deno.serve(async (req) => {
     );
 
     // Mirror a copy into Supabase for the designers' records (best effort).
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    if (supabaseUrl && serviceKey) {
-      const admin = createClient(supabaseUrl, serviceKey);
-      await admin.from('contact_messages').insert({
-        name: booking.client_name,
-        email: booking.client_email,
-        subject: `Booking confirmation sent — ${booking.booking_code}`,
-        message: `Confirmation email delivered for ${booking.website_name}.`,
-      });
-    }
+    await admin.from('contact_messages').insert({
+      name: booking.client_name,
+      email: booking.client_email,
+      subject: `Booking confirmation sent — ${booking.booking_code}`,
+      message: `Confirmation email delivered for ${booking.website_name}.`,
+    });
 
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json(cors, 200, { ok: true });
   } catch (error) {
+    // Log internally, but never echo details (keys, provider payloads…) out.
     console.error(error);
-    return new Response(JSON.stringify({ ok: false, error: String(error) }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json(cors, 500, { error: 'Internal error' });
   }
 });
