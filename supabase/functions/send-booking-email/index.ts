@@ -226,6 +226,14 @@ Deno.serve(async (req) => {
       html,
     );
 
+    // Also notify the agency inbox about the new order (best effort).
+    const agencyEmail = Deno.env.get('AGENCY_NOTIFY_EMAIL') ?? 'duopixelagency@gmail.com';
+    await sendEmail(
+      agencyEmail,
+      `New order — Duo Pixel Agency (${booking.booking_code})`,
+      html,
+    );
+
     // Mirror a copy into Supabase for the designers' records (best effort).
     await admin.from('contact_messages').insert({
       name: booking.client_name,

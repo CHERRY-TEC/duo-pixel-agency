@@ -149,6 +149,25 @@ export default function Confirmation() {
                   <CalendarCheck size={16} /> My bookings
                 </a>
               </div>
+              <a
+                href={mailto(
+                  AGENCY.email,
+                  `New order — Duo Pixel Agency (${booking.booking_code})`,
+                  [
+                    `Booking ID: ${booking.booking_code}`,
+                    `Project: ${booking.website_name}`,
+                    `Website type: ${booking.website_type}`,
+                    `Designer: ${booking.designer_slug ?? 'Unassigned'}`,
+                    `Budget: ${booking.budget}`,
+                    `Deadline: ${booking.deadline}`,
+                    `Client: ${booking.client_name} (${booking.client_email})`,
+                    `Phone: ${booking.client_phone}`,
+                  ].join('\n'),
+                )}
+                className="btn-ghost w-full justify-center"
+              >
+                <Mail size={16} /> Email this order to the agency
+              </a>
             </div>
 
             {/* email status */}
