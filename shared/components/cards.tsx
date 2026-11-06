@@ -19,21 +19,24 @@ import type { Designer, Faq, Package, Project, Service, Testimonial } from '../l
 export function DesignerCard({ designer }: { designer: Designer }) {
   return (
     <motion.article
-      whileHover={{ y: -6 }}
-      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+      whileHover={{ y: -8 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       className="card group flex h-full flex-col overflow-hidden"
     >
-      <div className="relative overflow-hidden bg-gradient-to-br from-ink-800 to-ink-900">
-        <div className="absolute inset-0 pixel-grid opacity-60" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-ink-800 to-ink-900 border border-ink-700/50">
+        <div className="absolute inset-0 pixel-grid opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-ink-900 to-ink-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="relative flex items-end gap-4 p-6">
-          <Avatar designer={designer} size={96} className="rounded-2xl" />
-          <div className="pb-1">
+          <div className="relative z-10">
+            <Avatar designer={designer} size={96} className="rounded-2xl group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div className="pb-1 z-10 relative">
             <span
               className={cx(
                 'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide',
                 designer.availability === 'Available'
-                  ? 'border-accent/40 bg-accent/10 text-accent'
-                  : 'border-amber-soft/40 bg-amber-soft/10 text-amber-soft',
+                  ? 'border-accent/40 bg-accent/10 text-accent shadow-[0_0_12px_rgba(185,255,57,0.35)]'
+                  : 'border-amber-soft/40 bg-amber-soft/10 text-amber-soft shadow-[0_0_12px_rgba(255,190,70,0.35)]',
               )}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -92,22 +95,24 @@ export function DesignerCard({ designer }: { designer: Designer }) {
 export function ProjectCard({ project, index = 0 }: { project: Project; index?: number }) {
   return (
     <motion.article
+      whileHover={{ y: -6 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 26 }}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-      className="card group overflow-hidden"
+      className="card group overflow-hidden border border-ink-700/50"
     >
       <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-tr from-accent/0 via-ink-900/40 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <ProjectArt
           project={project}
-          className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.03] sm:h-56"
+          className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.04] sm:h-56"
         />
-        <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/55 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
+        <span className="absolute left-4 top-4 z-10 rounded-full border border-white/15 bg-black/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur-md shadow-lg">
           {project.category}
         </span>
       </div>
-      <div className="p-5">
+      <div className="p-5 z-10 relative">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-display text-lg font-semibold text-white">{project.title}</h3>
           <span className="shrink-0 text-xs text-ink-400">{project.year}</span>
