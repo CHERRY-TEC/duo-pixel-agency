@@ -96,7 +96,7 @@ export const PROJECTS: Project[] = [
     description:
       'Small e-commerce site for an artisan food brand: catalogue, cart, checkout and WhatsApp handoff.',
     category: 'E-commerce',
-    live_url: 'https://artisanmarket.example.com',
+    live_url: 'https://github.com/hanmanthmarkanti-ux/khet',
     year: '2026',
     palette: ['#101014', '#FFB020', '#2E2E38'],
   },
@@ -107,7 +107,7 @@ export const PROJECTS: Project[] = [
     description:
       'Restaurant website: menu, story, location, hours and reservation path, mobile-first for walk-in traffic.',
     category: 'Business Website',
-    live_url: 'https://casaverde.example.com',
+    live_url: 'https://github.com/hanmanthmarkanti-ux/real-estate-land',
     year: '2026',
     palette: ['#17110C', '#FF7A45', '#4A2E1C'],
   },
@@ -118,7 +118,7 @@ export const PROJECTS: Project[] = [
     description:
       'SaaS product website for a client ops tool: landing page, pricing, product sections and app screenshots.',
     category: 'SaaS',
-    live_url: 'https://northwind.example.com',
+    live_url: 'https://github.com/hanmanthmarkanti-ux/studyflow-student-tracker',
     year: '2026',
     palette: ['#0B0B0D', '#E9FF3D', '#2C2C10'],
   },
