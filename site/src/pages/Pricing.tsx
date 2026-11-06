@@ -36,8 +36,8 @@ export default function Pricing() {
         <div className="container-x relative py-14 sm:py-20">
           <SectionHeading
             eyebrow="Pricing"
-            title="Simple packages, fixed prices"
-            description="Every price below is what you pay — no hourly surprises. Pick a package while booking and we will confirm scope on the first call."
+            title="Simple packages"
+            description="Pick a package while booking and we will confirm scope on the first call. No hourly surprises — every quote is fixed and agreed before work starts."
             align="center"
           />
           <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2">

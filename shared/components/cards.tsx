@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
 import ProjectArt from './ProjectArt';
 import { Rating } from './ui';
-import { cx, inr } from '../lib/format';
+import { cx } from '../lib/format';
 import type { Designer, Faq, Package, Project, Service, Testimonial } from '../lib/types';
 
 /* ------------------------------------------------------------ Designer */
@@ -159,7 +159,6 @@ export function PackageCard({
       <div className="mt-5 flex items-baseline gap-2">
         {editable ? (
           <label className="flex items-center gap-1 text-sm text-ink-300">
-            ₹
             <input
               type="number"
               min={0}
@@ -171,7 +170,7 @@ export function PackageCard({
           </label>
         ) : (
           <span className="font-display text-3xl font-bold text-white">
-            {pkg.price ? inr(pkg.price) : 'Custom'}
+            {pkg.price ? 'Get quote' : 'Custom'}
           </span>
         )}
         <span className="text-sm text-ink-400">{pkg.price_note}</span>

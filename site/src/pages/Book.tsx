@@ -592,7 +592,7 @@ export default function Book() {
                       { value: '', label: 'Not sure yet — recommend one' },
                       ...(packages ?? PACKAGES).map((p) => ({
                         value: p.id,
-                        label: `${p.name} — ${p.price ? inr(p.price) : 'custom quote'}`,
+                        label: `${p.name} — ${p.price_note}`,
                       })),
                     ]}
                     {...register('package_id')}

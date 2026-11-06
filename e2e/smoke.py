@@ -193,7 +193,7 @@ def run():
 
         # price edit visible publicly
         page.goto(f"{BASE}/pricing", wait_until="networkidle")
-        ok("₹8,999" in page.content(), "price edit reflects on pricing page")
+        ok("Get quote" in page.content(), "price edit reflects on pricing page")
 
         # --------------------------------------------------- OTHER PAGES
         page.goto(f"{BASE}/designers", wait_until="networkidle")

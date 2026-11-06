@@ -211,7 +211,7 @@ function ProfileTab({ designer }: { designer: Designer }) {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <TextField
-              label="Starting price (₹)"
+              label="Starting price"
               type="number"
               inputMode="numeric"
               value={form.starting_price}

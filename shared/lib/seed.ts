@@ -11,7 +11,7 @@ import type {
 export const AGENCY = {
   name: 'Duo Pixel Agency',
   tagline: 'Two designers. One pixel-perfect website.',
-  whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER || '919876543210',
+  whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER || '918328627605',
   email: import.meta.env.VITE_CONTACT_EMAIL || 'duopixelagency@gmail.com',
   city: 'Hyderabad, India',
   hours: 'Mon – Sat · 9:30am – 7:00pm IST',
@@ -43,7 +43,7 @@ export const DESIGNERS: Designer[] = [
     avg_delivery_days: 12,
     availability: 'Available',
     availability_note: 'Taking 2 new projects this month',
-    whatsapp: '919876543210',
+    whatsapp: '918328627605',
     email: 'hanmanthmarkanti@gmail.com',
     stats: { projects: 42, clients: 36, rating: 4.9 },
   },
@@ -71,7 +71,7 @@ export const DESIGNERS: Designer[] = [
     avg_delivery_days: 7,
     availability: 'Busy',
     availability_note: 'Fully booked this week · next slot in 4 days',
-    whatsapp: '919876543211',
+    whatsapp: '918328627606',
     email: 'karunasrikaram@gmail.com',
     stats: { projects: 58, clients: 47, rating: 4.8 },
   },
@@ -378,7 +378,7 @@ export const FAQS: Faq[] = [
     id: 'f3',
     question: 'How much does a website cost?',
     answer:
-      'Landing pages start at ₹7,999, business sites at ₹19,999, stores at ₹44,999 and portals at ₹74,999. The final quote is fixed after the free discovery call — no surprise invoices.',
+      'It depends on what you need — a landing page, a full business site, an online store or a custom portal. Book a free consultation and we will give you a written, fixed quote before anything is charged.',
   },
   {
     id: 'f4',
@@ -460,11 +460,11 @@ export const FEATURE_OPTIONS = [
 ];
 
 export const BUDGET_OPTIONS = [
-  'Under ₹10,000',
-  '₹10,000 – ₹25,000',
-  '₹25,000 – ₹50,000',
-  '₹50,000 – ₹1,00,000',
-  'Above ₹1,00,000',
+  'Under 10k',
+  '10k – 25k',
+  '25k – 50k',
+  '50k – 1L',
+  'Above 1L',
   'Not sure yet',
 ];
 
