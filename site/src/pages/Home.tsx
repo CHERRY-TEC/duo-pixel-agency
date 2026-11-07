@@ -43,15 +43,19 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pixel-grid opacity-70" aria-hidden="true" />
       <div
-        className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-accent/10 blur-[130px]"
+        className="absolute -top-40 left-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-600/20 blur-[140px]"
         aria-hidden="true"
       />
       <div
-        className="absolute right-[-140px] top-40 h-72 w-72 rounded-full bg-[#3E7BFF]/10 blur-[110px]"
+        className="absolute right-[-120px] top-32 h-80 w-80 rounded-full bg-[#B9FF39]/15 blur-[120px]"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute bottom-[-40px] left-1/4 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[130px]"
         aria-hidden="true"
       />
 
-      <div className="container-x relative pb-16 pt-14 sm:pb-24 sm:pt-20 lg:pt-24">
+      <div className="container-x relative pb-20 pt-16 sm:pb-32 sm:pt-24 lg:pt-28">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
           <div>
             <motion.span
@@ -68,7 +72,7 @@ function Hero() {
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.08 }}
-              className="mt-6 text-balance font-display text-[38px] font-bold leading-[1.04] text-white sm:text-6xl lg:text-[64px]"
+              className="mt-6 text-balance font-display text-[36px] font-bold leading-[1.04] text-white sm:text-5xl lg:text-[56px]"
             >
               Tell us the website you want.
               <span className="mt-1 block text-accent">We design it.</span>
@@ -127,16 +131,18 @@ function Hero() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <div className="card overflow-hidden">
-              <ProjectArt project={featured} className="h-56 w-full sm:h-64" />
-              <div className="flex items-center justify-between gap-3 p-4">
+            <div className="card overflow-hidden relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/40 via-ink-900 to-ink-950" />
+              <ProjectArt project={featured} className="h-56 w-full sm:h-64 relative z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-transparent to-transparent opacity-80" />
+              <div className="flex items-center justify-between gap-3 p-4 relative z-10">
                 <div className="min-w-0">
                   <p className="truncate font-display text-sm font-semibold text-white">
                     {featured.title}
                   </p>
                   <p className="text-xs text-ink-400">Live project · {featured.category}</p>
                 </div>
-                <span className="rounded-full bg-accent px-3 py-1.5 text-[11px] font-bold text-ink-950">
+                <span className="rounded-full bg-accent px-3 py-1.5 text-[11px] font-bold text-ink-950 shadow-[0_0_12px_rgba(185,255,57,0.4)]">
                   Delivered
                 </span>
               </div>
@@ -145,7 +151,7 @@ function Hero() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="card absolute -bottom-8 -left-3 hidden w-56 p-4 sm:block"
+              className="card absolute -bottom-8 -left-3 hidden w-56 p-4 sm:block relative z-20"
             >
               <div className="flex items-center gap-3">
                 <Avatar designer={DESIGNERS[0]} size={44} className="rounded-lg" />
@@ -166,7 +172,7 @@ function Hero() {
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              className="card absolute -right-3 -top-6 hidden p-4 sm:block"
+              className="card absolute -right-3 -top-6 hidden p-4 sm:block relative z-20"
             >
               <p className="text-[11px] uppercase tracking-wider text-ink-400">Avg. delivery</p>
               <p className="font-display text-2xl font-bold text-white">7 days</p>
@@ -178,7 +184,7 @@ function Hero() {
         </div>
 
         {/* stats strip */}
-        <div className="mt-16 grid grid-cols-2 gap-3 sm:mt-20 sm:grid-cols-4">
+        <div className="mt-16 grid grid-cols-2 gap-3 sm:mt-24 sm:grid-cols-4">
           {[
             ['100+', 'websites shipped'],
             ['4.9/5', 'average rating'],

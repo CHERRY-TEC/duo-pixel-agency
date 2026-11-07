@@ -21,14 +21,14 @@ export function DesignerCard({ designer }: { designer: Designer }) {
     <motion.article
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-      className="card group flex h-full flex-col overflow-hidden"
+      className="card group flex h-full flex-col overflow-hidden rounded-3xl border border-ink-700/50 shadow-card"
     >
-      <div className="relative overflow-hidden bg-gradient-to-br from-ink-800 to-ink-900 border border-ink-700/50">
+      <div className="relative overflow-hidden rounded-t-3xl bg-gradient-to-br from-ink-800 to-ink-900 border-b border-ink-700/50">
         <div className="absolute inset-0 pixel-grid opacity-50" />
         <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-ink-900 to-ink-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="relative flex items-end gap-4 p-6">
           <div className="relative z-10">
-            <Avatar designer={designer} size={96} className="rounded-2xl group-hover:scale-105 transition-transform duration-500" />
+            <Avatar designer={designer} size={96} className="rounded-2xl group-hover:scale-105 transition-transform duration-500 ring-2 ring-accent/20 ring-offset-2 ring-offset-ink-950" />
           </div>
           <div className="pb-1 z-10 relative">
             <span
@@ -74,13 +74,13 @@ export function DesignerCard({ designer }: { designer: Designer }) {
           </div>
         </div>
 
-        <div className="mt-5 flex gap-2">
-          <Link to={`/designer/${designer.slug}`} className="btn-ghost flex-1 !px-4 !py-2.5">
+        <div className="mt-6 flex gap-2">
+          <Link to={`/designer/${designer.slug}`} className="btn-ghost flex-1 !px-4 !py-3 rounded-xl">
             View profile
           </Link>
           <Link
             to={`/book?designer=${designer.slug}`}
-            className="btn-primary flex-1 !px-4 !py-2.5"
+            className="btn-primary flex-1 !px-4 !py-3 rounded-xl"
           >
             Book {designer.short_name}
           </Link>
@@ -100,9 +100,9 @@ export function ProjectCard({ project, index = 0 }: { project: Project; index?: 
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      className="card group overflow-hidden border border-ink-700/50"
+      className="card group overflow-hidden rounded-3xl border border-ink-700/50 shadow-card"
     >
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden rounded-t-3xl">
         <div className="absolute inset-0 bg-gradient-to-tr from-accent/0 via-ink-900/40 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <ProjectArt
           project={project}

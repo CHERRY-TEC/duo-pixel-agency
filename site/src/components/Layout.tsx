@@ -1,11 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowUpRight,
+  BookOpen,
+  Home,
   LogOut,
   Mail,
   Menu,
   MessageCircle,
   Sparkles,
+  User,
+  Users,
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -348,10 +352,53 @@ export default function Layout() {
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
       <Navbar />
-      <main className="flex-1 pt-16 sm:pt-[72px]">
+      <main className="flex-1 pt-16 sm:pt-[72px] pb-safe">
         <Outlet />
       </main>
       <Footer />
+      <MobileBottomNav />
     </div>
+  );
+}
+
+/* ------------------------------------------------ Mobile bottom tab nav */
+
+const BOTTOM_NAV = [
+  { to: '/', label: 'Home', icon: <Home size={20} /> },
+  { to: '/designers', label: 'Designers', icon: <Users size={20} /> },
+  { to: '/book', label: 'Book', icon: <BookOpen size={20} /> },
+  { to: portalUrl('/account/my-bookings'), label: 'Profile', icon: <User size={20} />, external: true },
+];
+
+function MobileBottomNav() {
+  const location = useLocation();
+  return (
+    <nav
+      className={cx(
+        'fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-4 py-3 sm:py-3.5 border-t border-ink-700/60 bg-ink-950/90 backdrop-blur-xl',
+        'pb-safe',
+      )}
+      aria-label="Bottom navigation"
+    >
+      {BOTTOM_NAV.map((item) => {
+        const isActive = location.pathname === item.to || (item.to === '/' && location.pathname === '/');
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={cx(
+              'flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all duration-200',
+              isActive
+                ? 'bg-accent/15 text-accent shadow-[0_0_20px_rgba(185,255,57,0.25)]'
+                : 'text-ink-400 hover:text-accent hover:bg-ink-900',
+            )}
+            aria-label={item.label}
+          >
+            {item.icon}
+            <span className="text-[10px] font-medium">{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
