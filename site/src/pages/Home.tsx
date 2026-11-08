@@ -133,7 +133,16 @@ function Hero() {
           >
             <div className="card overflow-hidden relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/40 via-ink-900 to-ink-950" />
-              <ProjectArt project={featured} className="h-56 w-full sm:h-64 relative z-10" />
+              {featured.image ? (
+                <img
+                  src={featured.image}
+                  alt={`${featured.title} website screenshot`}
+                  loading="lazy"
+                  className="h-56 w-full sm:h-64 relative z-10 object-cover"
+                />
+              ) : (
+                <ProjectArt project={featured} className="h-56 w-full sm:h-64 relative z-10" />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-transparent to-transparent opacity-80" />
               <div className="flex items-center justify-between gap-3 p-4 relative z-10">
                 <div className="min-w-0">

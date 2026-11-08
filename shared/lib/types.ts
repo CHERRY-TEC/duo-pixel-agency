@@ -92,6 +92,8 @@ export interface Project {
   live_url: string;
   year: string;
   palette: [string, string, string];
+  /** Real screenshot of the live site (in /public/images). Falls back to generated art. */
+  image?: string;
 }
 
 export interface Review {

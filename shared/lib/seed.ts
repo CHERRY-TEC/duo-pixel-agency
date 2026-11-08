@@ -88,6 +88,7 @@ export const PROJECTS: Project[] = [
     live_url: 'https://hanmanth-portfolio-k8guugrme-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#0E1B12', '#B9FF39', '#1F6F4A'],
+    image: '/images/hanmanth-portfolio.png',
   },
   {
     id: 'sundar-ecommerce',
@@ -96,9 +97,10 @@ export const PROJECTS: Project[] = [
     description:
       'Small e-commerce site for an artisan food brand: catalogue, cart, checkout and WhatsApp handoff.',
     category: 'E-commerce',
-    live_url: 'https://github.com/hanmanthmarkanti-ux/khet',
+    live_url: 'https://khet-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#101014', '#FFB020', '#2E2E38'],
+    image: '/images/khet.png',
   },
   {
     id: 'sundar-restaurant',
@@ -107,9 +109,10 @@ export const PROJECTS: Project[] = [
     description:
       'Restaurant website: menu, story, location, hours and reservation path, mobile-first for walk-in traffic.',
     category: 'Business Website',
-    live_url: 'https://github.com/hanmanthmarkanti-ux/real-estate-land',
+    live_url: 'https://real-estate-land-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#17110C', '#FF7A45', '#4A2E1C'],
+    image: '/images/real-estate-land.png',
   },
   {
     id: 'sundar-saas',
@@ -118,9 +121,10 @@ export const PROJECTS: Project[] = [
     description:
       'SaaS product website for a client ops tool: landing page, pricing, product sections and app screenshots.',
     category: 'SaaS',
-    live_url: 'https://github.com/hanmanthmarkanti-ux/studyflow-student-tracker',
+    live_url: 'https://studyflow-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#0B0B0D', '#E9FF3D', '#2C2C10'],
+    image: '/images/studyflow.png',
   },
 ];
 

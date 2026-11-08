@@ -129,10 +129,19 @@ export function ProjectCard({ project, index = 0 }: { project: Project; index?: 
             background: `radial-gradient(circle at 50% 0%, ${accent}20, transparent 70%)`,
           }}
         />
-        <ProjectArt
-          project={project}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-        />
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={`${project.title} website screenshot`}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+          />
+        ) : (
+          <ProjectArt
+            project={project}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+          />
+        )}
         <span className="absolute left-4 top-4 z-10 rounded-full border border-white/15 bg-black/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur-md shadow-lg">
           {project.category}
         </span>
