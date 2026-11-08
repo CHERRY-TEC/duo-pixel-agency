@@ -100,7 +100,7 @@ export const PROJECTS: Project[] = [
     live_url: 'https://khet-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#101014', '#FFB020', '#2E2E38'],
-    image: '/images/khet-demo.png',
+    image: '/images/ecommerce.jpg',
   },
   {
     id: 'sundar-restaurant',
@@ -112,7 +112,7 @@ export const PROJECTS: Project[] = [
     live_url: 'https://real-estate-land-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#17110C', '#FF7A45', '#4A2E1C'],
-    image: '/images/terravista.png',
+    image: '/images/restaurant.jpg',
   },
   {
     id: 'sundar-saas',
@@ -124,7 +124,7 @@ export const PROJECTS: Project[] = [
     live_url: 'https://studyflow-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#0B0B0D', '#E9FF3D', '#2C2C10'],
-    image: '/images/studyflow-app.png',
+    image: '/images/saas.jpg',
   },
 ];
 
