@@ -259,32 +259,29 @@ shown on the login screen:
 
 ## Deployment
 
-### Vercel — two separate websites (the current setup)
+### Vercel (the current production setup)
 
-The two apps deploy as **two Vercel projects created from this one repo**, each with its
-own URL:
+**One Vercel project — `duo-pixel-agency` — serves both apps on one domain:**
 
-| Website | Vercel project | Production URL | `APP_TARGET` | Cross-link env var |
-| --- | --- | --- | --- | --- |
-| Public website | `duo-pixel-agency` | `https://duo-pixel-agency.vercel.app` | `site` | `VITE_PORTAL_URL=https://duo-pixel-portal.vercel.app` |
-| Client & designer portal | `duo-pixel-portal` | `https://duo-pixel-portal.vercel.app` | `portal` | `VITE_SITE_URL=https://duo-pixel-agency.vercel.app` |
+| Website | Production URL | Notes |
+| --- | --- | --- |
+| Public website | `https://duo-pixel-agency.vercel.app` | `/`, `/designers`, `/pricing`, `/book`, … |
+| Client & designer portal | `https://duo-pixel-agency.vercel.app/portal` | also `/login`, `/signup`, `/track`, `/account/*`, `/dashboard/*` via rewrites |
 
-`APP_TARGET` is a **project env var (Production)** on each project. It tells
-[`scripts/build.mjs`](scripts/build.mjs) which single app to build into Vercel's default
-`dist/` output directory, so both projects keep the default build command (`npm run build`)
-and output directory — no custom build settings needed. The `VITE_*_URL` values point each
-app at the other one and are baked in at build time.
+`VITE_PORTAL_URL` and `VITE_SITE_URL` stay **empty** (same-origin): every link is
+relative, so the site and portal share `localStorage` demo data and no cross-origin setup
+is needed. [`vercel.json`](vercel.json) maps the portal routes to `portal.html`.
 
 ```bash
-# the local repo is linked to one project at a time; switch, then deploy
-vercel link --yes --project duo-pixel-agency   # or duo-pixel-portal
-vercel env add APP_TARGET production --value site --yes     # site / portal
+vercel link --yes --project duo-pixel-agency
 vercel --prod
 ```
 
-> **Two domains don't share demo data.** `localStorage` is per-origin, so a booking made on
-> the website is not visible to the portal until you connect **Supabase** (see above). That
-> is expected — they are genuinely separate sites.
+> **Optional two-domain split.** You *can* deploy the apps as two Vercel projects from
+> this repo: set `APP_TARGET=site` / `APP_TARGET=portal` (project env var, Production) so
+> [`scripts/build.mjs`](scripts/build.mjs) builds only one app into `dist/`, then point
+> `VITE_PORTAL_URL` / `VITE_SITE_URL` at each other's origin. Note that two domains don't
+> share `localStorage` demo data — bookings only sync once **Supabase** is connected.
 
 ### One domain (combined build)
 
