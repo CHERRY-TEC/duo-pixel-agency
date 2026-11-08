@@ -3,4 +3,4 @@ Allow: /
 
 # Booking IDs, logins and dashboards are not for search results
 # (the portal is also marked noindex in portal.html).
-Sitemap: https://duo-pixel-agency-five.vercel.app/sitemap.xml
+Sitemap: https://duo-pixel-agency.vercel.app/sitemap.xml

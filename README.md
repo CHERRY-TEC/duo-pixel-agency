@@ -266,8 +266,8 @@ own URL:
 
 | Website | Vercel project | Production URL | `APP_TARGET` | Cross-link env var |
 | --- | --- | --- | --- | --- |
-| Public website | `duo-pixel-agency` | `https://duo-pixel-agency-five.vercel.app` | `site` | `VITE_PORTAL_URL=https://duo-pixel-portal.vercel.app` |
-| Client & designer portal | `duo-pixel-portal` | `https://duo-pixel-portal.vercel.app` | `portal` | `VITE_SITE_URL=https://duo-pixel-agency-five.vercel.app` |
+| Public website | `duo-pixel-agency` | `https://duo-pixel-agency.vercel.app` | `site` | `VITE_PORTAL_URL=https://duo-pixel-portal.vercel.app` |
+| Client & designer portal | `duo-pixel-portal` | `https://duo-pixel-portal.vercel.app` | `portal` | `VITE_SITE_URL=https://duo-pixel-agency.vercel.app` |
 
 `APP_TARGET` is a **project env var (Production)** on each project. It tells
 [`scripts/build.mjs`](scripts/build.mjs) which single app to build into Vercel's default
