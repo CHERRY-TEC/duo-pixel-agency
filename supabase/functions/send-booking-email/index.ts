@@ -21,7 +21,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const ALLOWED_ORIGINS = new Set(
   (
     Deno.env.get('ALLOWED_ORIGINS') ??
-      'https://duo-pixel-agency.vercel.app,https://duo-pixel-portal.vercel.app'
+      'https://duo-pixel-agency-five.vercel.app,https://duo-pixel-portal.vercel.app'
   )
     .split(',')
     .map((s) => s.trim())
@@ -218,7 +218,7 @@ Deno.serve(async (req) => {
     }
 
     const siteUrl =
-      Deno.env.get('SITE_URL') ?? 'https://duo-pixel-agency.vercel.app';
+      Deno.env.get('SITE_URL') ?? 'https://duo-pixel-agency-five.vercel.app';
     const html = renderEmail(booking, siteUrl);
     await sendEmail(
       booking.client_email,
