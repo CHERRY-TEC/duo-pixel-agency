@@ -80,7 +80,7 @@ def run():
         ok("Budget, timeline" in page.content(), "step 4 reached")
 
         # ------------------------------------------------------- STEP 4
-        page.locator("label", has_text="10,000").first.click()
+        page.locator("label", has_text="Under 10k").first.click()
         page.locator("label", has_text="2 – 3 weeks").first.click()
         page.get_by_role("button", name="Continue").click()
         page.wait_for_timeout(400)
