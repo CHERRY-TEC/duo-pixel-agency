@@ -84,7 +84,7 @@ export default function Signup() {
       >
         <div className="card p-6 sm:p-8">
           <a href={siteUrl('/')} className="inline-block">
-            <Logo size={28} />
+            <Logo size={44} />
           </a>
 
           <h1 className="mt-6 font-display text-2xl font-bold text-white">Create your account</h1>

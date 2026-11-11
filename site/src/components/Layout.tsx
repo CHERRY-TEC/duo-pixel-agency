@@ -238,7 +238,7 @@ function Footer() {
       <div className="container-x relative py-14">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
-            <Logo />
+            <Logo size={48} />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-300">
               {AGENCY.tagline} We design and build websites for founders, shops and teams —
               from a single landing page to a full portal.
