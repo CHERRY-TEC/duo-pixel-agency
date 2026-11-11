@@ -6,24 +6,20 @@ interface LogoProps {
 }
 
 /**
- * Duo Pixel Agency wordmark — two overlapping pixel squares + type.
- * The same shape is used for the favicon (public/favicon.svg).
+ * Duo Pixel Agency badge — the official circular logo (public/logo.jpg).
  */
 export function LogoMark({ size = 32, className = '' }: { size?: number; className?: string }) {
   return (
-    <svg
+    <img
+      src="/logo.jpg"
+      alt=""
+      aria-hidden="true"
       width={size}
       height={size}
-      viewBox="0 0 48 48"
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <rect x="4" y="4" width="24" height="24" rx="3" fill="#B9FF39" />
-      <rect x="20" y="20" width="24" height="24" rx="3" fill="#FFFFFF" />
-      <rect x="20" y="20" width="8" height="8" fill="#B9FF39" />
-      <rect x="32" y="32" width="6" height="6" fill="#0A0A0C" />
-    </svg>
+      loading="eager"
+      className={`shrink-0 rounded-full object-cover ${className}`}
+      style={{ width: size, height: size }}
+    />
   );
 }
 

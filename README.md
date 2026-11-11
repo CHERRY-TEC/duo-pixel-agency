@@ -184,8 +184,10 @@ duo-pixel-agency/
 ├── vite.site.config.ts        # standalone build → dist/site
 ├── vite.portal.config.ts      # standalone build → dist/portal
 ├── public/
-│   ├── favicon.svg            # two overlapping pixel squares
-│   └── og.svg                 # social share image
+│   ├── logo.jpg                # official Duo Pixel Agency badge (header, og, JSON-LD)
+│   ├── favicon.png             # browser tab icon (badge crop)
+│   ├── apple-touch-icon.png    # iOS home-screen icon
+│   └── images/                 # project card screenshots + category photos
 ├── site/                      # WEBSITE 1 — public marketing + booking
 │   └── src/
 │       ├── App.tsx            # public routes
@@ -344,7 +346,8 @@ Empty Supabase values ⇒ the app runs in local demo mode instead of failing.
   the dashboard).
 - **Colours & fonts** — `tailwind.config.ts` (`accent` is the single bold accent colour;
   `ink` is the dark palette). Fonts load from Google Fonts in `index.html` and `portal.html`.
-- **Logo** — `shared/components/Logo.tsx` and `public/favicon.svg` (same two-square mark).
+- **Logo** — `shared/components/Logo.tsx` renders `public/logo.jpg` (the official circular
+  badge) beside the wordmark; `favicon.png` / `apple-touch-icon.png` come from the same file.
 - **Contact details** — `VITE_WHATSAPP_NUMBER`, `VITE_CONTACT_EMAIL`, and `AGENCY` in
   `shared/lib/seed.ts`.
 - **Feature / budget / deadline options** — bottom of `shared/lib/seed.ts`.
