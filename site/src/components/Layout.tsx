@@ -8,7 +8,6 @@ import {
   Menu,
   MessageCircle,
   Sparkles,
-  User,
   Users,
   X,
 } from 'lucide-react';
@@ -367,7 +366,6 @@ const BOTTOM_NAV = [
   { to: '/', label: 'Home', icon: <Home size={20} /> },
   { to: '/designers', label: 'Designers', icon: <Users size={20} /> },
   { to: '/book', label: 'Book', icon: <BookOpen size={20} /> },
-  { to: portalUrl('/account/my-bookings'), label: 'Profile', icon: <User size={20} />, external: true },
 ];
 
 function MobileBottomNav() {
