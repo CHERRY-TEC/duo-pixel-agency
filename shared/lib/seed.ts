@@ -105,11 +105,11 @@ export const PROJECTS: Project[] = [
   {
     id: 'sundar-restaurant',
     designer: 'sundar',
-    title: 'Casa Verde Restaurant',
+    title: 'La Bella Tavola Restaurant',
     description:
       'Restaurant website: menu, story, location, hours and reservation path, mobile-first for walk-in traffic.',
     category: 'Business Website',
-    live_url: 'https://real-estate-land-cherry-ff88.vercel.app/',
+    live_url: 'https://la-bella-tavola-cherry-ff88.vercel.app/',
     year: '2026',
     palette: ['#17110C', '#FF7A45', '#4A2E1C'],
     image: '/images/restaurant.jpg',
