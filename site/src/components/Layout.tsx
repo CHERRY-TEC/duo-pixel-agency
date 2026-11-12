@@ -57,8 +57,14 @@ function Navbar() {
     };
   }, [open]);
 
-  // Tracking, the client area and the designer dashboard live in the portal app.
-  const accountHref = portalUrl(user?.role === 'designer' ? '/dashboard' : '/account/my-bookings');
+  // Tracking, the client area, the designer dashboard and admin live in the portal app.
+  const accountHref = portalUrl(
+    user?.role === 'designer'
+      ? '/dashboard'
+      : user?.role === 'admin'
+        ? '/admin'
+        : '/account/my-bookings',
+  );
 
   return (
     <>
@@ -102,7 +108,7 @@ function Navbar() {
                   href={accountHref}
                   className="hidden rounded-full border border-ink-600 px-4 py-2 text-sm font-medium text-ink-100 transition hover:border-accent/50 hover:text-accent sm:inline-flex"
                 >
-                  {user.role === 'designer' ? 'Dashboard' : 'My Bookings'}
+                  {user.role === 'designer' ? 'Dashboard' : user.role === 'admin' ? 'Admin' : 'My Bookings'}
                 </a>
                 <button
                   type="button"
@@ -182,7 +188,13 @@ function Navbar() {
                     href={user ? accountHref : portalUrl('/track')}
                     className="block rounded-2xl px-4 py-3.5 text-base text-ink-200"
                   >
-                    {user ? (user.role === 'designer' ? 'Designer dashboard' : 'My Bookings') : 'Track a booking'}
+                  {user
+                    ? user.role === 'designer'
+                      ? 'Designer dashboard'
+                      : user.role === 'admin'
+                        ? 'Admin — all orders'
+                        : 'My Bookings'
+                    : 'Track a booking'}
                   </a>
                   {!user && (
                     <a

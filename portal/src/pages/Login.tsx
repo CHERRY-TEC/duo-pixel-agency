@@ -17,6 +17,21 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+/** Landing route per role after auth. */
+function homeForRole(role: 'client' | 'designer' | 'admin'): string {
+  if (role === 'admin') return '/admin';
+  if (role === 'designer') return '/dashboard';
+  return '/account/my-bookings';
+}
+
+/** Landing route by email before the session object exists. */
+function homeForEmail(email: string): string {
+  const e = email.trim().toLowerCase();
+  if (e === 'admin@duopixel.agency') return '/admin';
+  if (e.startsWith('markanti') || e.startsWith('sundar')) return '/dashboard';
+  return '/account/my-bookings';
+}
+
 export default function Login() {
   const { user, loading, signIn, signInWithGoogle, mode } = useAuth();
   const navigate = useNavigate();
@@ -40,18 +55,14 @@ export default function Login() {
   }, []);
 
   if (!loading && user) {
-    return <Navigate to={user.role === 'designer' ? '/dashboard' : '/account/my-bookings'} replace />;
+    return <Navigate to={homeForRole(user.role)} replace />;
   }
 
   const onSubmit = async (values: FormValues) => {
     setServerError('');
     try {
       await signIn(values.email, values.password);
-      const target =
-        from ??
-        (values.email.startsWith('markanti') || values.email.startsWith('sundar')
-          ? '/dashboard'
-          : '/account/my-bookings');
+      const target = from ?? homeForEmail(values.email);
       navigate(target, { replace: true });
     } catch (error) {
       setServerError(error instanceof Error ? error.message : 'Could not sign in.');
@@ -136,6 +147,10 @@ export default function Login() {
                 <KeyRound size={13} /> Demo accounts (no Supabase configured)
               </p>
               <ul className="mt-2.5 space-y-1.5 font-mono text-xs text-ink-300">
+                <li>
+                  admin@duopixel.agency · designer123{' '}
+                  <span className="text-ink-500">(admin — all orders)</span>
+                </li>
                 <li>
                   markanti@duopixel.agency · designer123{' '}
                   <span className="text-ink-500">(designer dashboard)</span>

@@ -10,6 +10,8 @@
       { "source": "/account/**", "destination": "/portal.html" },
       { "source": "/dashboard", "destination": "/portal.html" },
       { "source": "/dashboard/**", "destination": "/portal.html" },
+      { "source": "/admin", "destination": "/portal.html" },
+      { "source": "/admin/**", "destination": "/portal.html" },
       { "source": "**", "destination": "/index.html" }
     ],
     "headers": [

@@ -44,7 +44,18 @@ export default function Signup() {
   }, []);
 
   if (!loading && user) {
-    return <Navigate to={user.role === 'designer' ? '/dashboard' : '/account/my-bookings'} replace />;
+    return (
+      <Navigate
+        to={
+          user.role === 'admin'
+            ? '/admin'
+            : user.role === 'designer'
+              ? '/dashboard'
+              : '/account/my-bookings'
+        }
+        replace
+      />
+    );
   }
 
   const onSubmit = async (values: FormValues) => {

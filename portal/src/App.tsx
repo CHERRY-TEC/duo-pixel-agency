@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import PortalLayout from './components/PortalLayout';
+import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import DashboardBooking from './pages/DashboardBooking';
 import Login from './pages/Login';
@@ -25,7 +26,18 @@ function RequireDesigner({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
   if (loading) return <RouteLoading />;
   if (!user) return <Navigate to="/login" replace state={{ from: '/dashboard' }} />;
+  if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role !== 'designer') return <Navigate to="/account/my-bookings" replace />;
+  return children;
+}
+
+function RequireAdmin({ children }: { children: JSX.Element }) {
+  const { user, loading } = useAuth();
+  if (loading) return <RouteLoading />;
+  if (!user) return <Navigate to="/login" replace state={{ from: '/admin' }} />;
+  if (user.role !== 'admin') {
+    return <Navigate to={user.role === 'designer' ? '/dashboard' : '/account/my-bookings'} replace />;
+  }
   return children;
 }
 
@@ -68,6 +80,22 @@ export default function App() {
             <RequireDesigner>
               <DashboardBooking />
             </RequireDesigner>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <Admin />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/bookings/:id"
+          element={
+            <RequireAdmin>
+              <DashboardBooking />
+            </RequireAdmin>
           }
         />
         <Route path="*" element={<NotFound />} />

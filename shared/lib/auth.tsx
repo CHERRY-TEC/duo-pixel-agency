@@ -22,11 +22,22 @@ interface StoredUser {
   email: string;
   name: string;
   password: string;
-  role: 'client' | 'designer';
+  role: 'client' | 'designer' | 'admin';
   designer_slug: DesignerSlug | null;
 }
 
+/** Emails that get the agency admin role (sees every order). */
+const ADMIN_EMAILS = ['admin@duopixel.agency'];
+
 const DEMO_DESIGNERS: StoredUser[] = [
+  {
+    id: 'seed-admin',
+    email: 'admin@duopixel.agency',
+    name: 'Agency Admin',
+    password: 'designer123',
+    role: 'admin',
+    designer_slug: null,
+  },
   {
     id: 'seed-markanti',
     email: 'markanti@duopixel.agency',
@@ -53,7 +64,7 @@ function readUsers(): StoredUser[] {
       return DEMO_DESIGNERS;
     }
     const parsed = JSON.parse(raw) as StoredUser[];
-    // Always keep the two designer logins available.
+    // Always keep the seeded admin + designer logins available.
     const merged = [...parsed];
     DEMO_DESIGNERS.forEach((d) => {
       if (!merged.some((u) => u.email === d.email)) merged.push(d);
@@ -130,11 +141,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const designer = ['markanti@duopixel.agency', 'sundar@duopixel.agency'].includes(email)
             ? (email.startsWith('markanti') ? 'markanti' : 'sundar')
             : null;
+          const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
           setUser({
             id: session.user.id,
             email,
             name: (meta.full_name as string) || nameFromEmail(email),
-            role: designer ? 'designer' : 'client',
+            role: isAdmin ? 'admin' : designer ? 'designer' : 'client',
             designer_slug: designer as DesignerSlug | null,
             provider: 'email',
           });
@@ -151,11 +163,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             : email.startsWith('sundar')
               ? 'sundar'
               : null;
+          const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
           setUser({
             id: s.user.id,
             email,
             name: (s.user.user_metadata?.full_name as string) || nameFromEmail(email),
-            role: designer ? 'designer' : 'client',
+            role: isAdmin ? 'admin' : designer ? 'designer' : 'client',
             designer_slug: designer as DesignerSlug | null,
             provider: 'email',
           });

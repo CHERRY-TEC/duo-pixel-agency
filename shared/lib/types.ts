@@ -156,7 +156,7 @@ export interface SessionUser {
   id: string;
   email: string;
   name: string;
-  role: 'client' | 'designer';
+  role: 'client' | 'designer' | 'admin';
   designer_slug: DesignerSlug | null;
   provider: 'email' | 'google' | 'demo';
 }

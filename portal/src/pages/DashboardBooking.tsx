@@ -50,6 +50,7 @@ export default function DashboardBooking() {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState('');
   const [flash, setFlash] = useState('');
+  const [assignTo, setAssignTo] = useState<'markanti' | 'sundar'>('markanti');
 
   const load = useCallback(() => {
     listBookings().then((list) => {
@@ -94,6 +95,19 @@ export default function DashboardBooking() {
     }
   };
 
+  const assign = async () => {
+    if (!booking) return;
+    setBusy('assign');
+    try {
+      const updated = await claimBooking(booking.id, assignTo);
+      if (updated) setBooking(updated);
+      setFlash(`Assigned to ${assignTo === 'markanti' ? 'Markanti' : 'Sundar'}`);
+      window.setTimeout(() => setFlash(''), 2600);
+    } finally {
+      setBusy('');
+    }
+  };
+
   const saveNote = async () => {
     if (!booking) return;
     setBusy('note');
@@ -107,17 +121,21 @@ export default function DashboardBooking() {
     }
   };
 
+  const isAdmin = user?.role === 'admin';
+  const home = isAdmin ? '/admin' : '/dashboard';
+  const homeLabel = isAdmin ? 'All orders' : 'Dashboard';
+
   if (!booking) {
     return (
       <div className="container-x py-10">
-        <BackLink to="/dashboard">Dashboard</BackLink>
+        <BackLink to={home}>{homeLabel}</BackLink>
         <div className="mt-6">
           <EmptyState
             title="Booking not found"
             body="This booking does not exist, or it is not visible to your account."
             action={
-              <button type="button" onClick={() => navigate('/dashboard')} className="btn-primary">
-                Back to dashboard
+              <button type="button" onClick={() => navigate(home)} className="btn-primary">
+                Back to {homeLabel.toLowerCase()}
               </button>
             }
           />
@@ -131,19 +149,20 @@ export default function DashboardBooking() {
     `Hi ${booking.client_name.split(' ')[0]}, this is Duo Pixel Agency regarding your booking ${booking.booking_code} for ${booking.website_name}.`,
   );
 
-  const canSee = booking.designer_slug === null || booking.designer_slug === user?.designer_slug;
+  const canSee =
+    isAdmin || booking.designer_slug === null || booking.designer_slug === user?.designer_slug;
 
   if (!canSee) {
     return (
       <div className="container-x py-10">
-        <BackLink to="/dashboard">Dashboard</BackLink>
+        <BackLink to={home}>{homeLabel}</BackLink>
         <div className="mt-6">
           <EmptyState
             title="Not your booking"
             body="This project is assigned to the other designer."
             action={
-              <button type="button" onClick={() => navigate('/dashboard')} className="btn-primary">
-                Back to my bookings
+              <button type="button" onClick={() => navigate(home)} className="btn-primary">
+                Back to {homeLabel.toLowerCase()}
               </button>
             }
           />
@@ -155,7 +174,7 @@ export default function DashboardBooking() {
   return (
     <div className="container-x py-8 sm:py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <BackLink to="/dashboard">Dashboard</BackLink>
+        <BackLink to={home}>{homeLabel}</BackLink>
         {flash && (
           <motion.span
             initial={{ opacity: 0, y: -6 }}
@@ -220,16 +239,44 @@ export default function DashboardBooking() {
         {!booking.designer_slug && (
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-soft/30 bg-amber-soft/5 p-4">
             <p className="text-sm text-ink-300">
-              This request is in the unassigned pool. Accept it to move it into your bookings.
+              {isAdmin
+                ? 'This request is unassigned. Pick which designer should take it.'
+                : 'This request is in the unassigned pool. Accept it to move it into your bookings.'}
             </p>
-            <button
-              type="button"
-              onClick={claim}
-              disabled={busy === 'claim'}
-              className="btn-primary !py-2.5"
-            >
-              <UserCheck size={15} /> {busy === 'claim' ? 'Assigning…' : 'Accept & assign to me'}
-            </button>
+            {isAdmin ? (
+              <div className="flex items-center gap-2">
+                <select
+                  value={assignTo}
+                  onChange={(e) => setAssignTo(e.target.value as 'markanti' | 'sundar')}
+                  aria-label="Assign to designer"
+                  className="input !w-auto !appearance-none !py-2.5"
+                >
+                  <option value="markanti" className="bg-ink-900">
+                    Markanti
+                  </option>
+                  <option value="sundar" className="bg-ink-900">
+                    Sundar
+                  </option>
+                </select>
+                <button
+                  type="button"
+                  onClick={assign}
+                  disabled={busy === 'assign'}
+                  className="btn-primary !py-2.5"
+                >
+                  <UserCheck size={15} /> {busy === 'assign' ? 'Assigning…' : 'Assign'}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={claim}
+                disabled={busy === 'claim'}
+                className="btn-primary !py-2.5"
+              >
+                <UserCheck size={15} /> {busy === 'claim' ? 'Assigning…' : 'Accept & assign to me'}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -412,10 +459,10 @@ export default function DashboardBooking() {
 
       <div className="mt-6">
         <Link
-          to="/dashboard"
+          to={home}
           className="inline-flex items-center gap-2 text-sm text-ink-400 transition hover:text-accent"
         >
-          <ArrowLeft size={15} /> Back to dashboard
+          <ArrowLeft size={15} /> Back to {homeLabel.toLowerCase()}
         </Link>
       </div>
     </div>

@@ -1,7 +1,8 @@
-import { ArrowUpRight, LayoutDashboard, MapPin } from 'lucide-react';
+import { ArrowUpRight, LayoutDashboard, MapPin, ShieldCheck } from 'lucide-react';
 import { useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
+import { useAuth } from '@/lib/auth';
 import { cx } from '@/lib/format';
 import { siteUrl } from '@/lib/links';
 
@@ -24,6 +25,20 @@ function ScrollToTop() {
  * marketing site's navbar — everything here is account work.
  */
 export default function PortalLayout() {
+  const { user } = useAuth();
+  const items =
+    user?.role === 'admin'
+      ? [
+          { to: '/admin', label: 'All orders', icon: ShieldCheck },
+          { to: '/track', label: 'Track a booking', icon: MapPin },
+        ]
+      : user?.role === 'designer'
+        ? [
+            { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { to: '/track', label: 'Track a booking', icon: MapPin },
+          ]
+        : NAV;
+
   return (
     <div className="flex min-h-screen flex-col bg-ink-950">
       <ScrollToTop />
@@ -36,7 +51,7 @@ export default function PortalLayout() {
 
           <div className="flex flex-wrap items-center gap-1 sm:gap-2">
             <nav aria-label="Portal" className="flex items-center gap-1">
-              {NAV.map((item) => (
+              {items.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}

@@ -4,8 +4,10 @@ End-to-end smoke test for Duo Pixel Agency.
 Covers: home, the full 6-step booking flow (with validation + review step),
 confirmation ID + copy, public tracking (incl. wrong-phone rejection), designer
 login, unassigned-pool claim, status update, internal note, dashboard profile /
-pricing / reviews edits and their public reflection, contact form, sign out,
-client signup, 404, mobile drawer, and the client's live status view.
+pricing / reviews edits and their public reflection, admin login + the /admin
+orders table (search, filters, order detail, client access blocked), contact
+form, sign out, client signup, 404, mobile drawer, and the client's live status
+view.
 
 Run (from the project root):
 
@@ -218,6 +220,41 @@ def run():
         page.wait_for_url(f"{BASE}/", timeout=10000)
         ok(True, "designer sign out works")
 
+        # --------------------------------------------------- ADMIN ORDERS
+        page.goto(f"{BASE}/login", wait_until="networkidle")
+        page.get_by_label("Email").fill("admin@duopixel.agency")
+        page.get_by_label("Password").fill("designer123")
+        page.get_by_role("button", name="Log in").click()
+        page.wait_for_url("**/admin", timeout=10000)
+        ok("All orders" in page.content(), "admin login lands on /admin")
+        ok(code in page.content(), "admin sees the new order in the table")
+
+        # search narrows the table
+        page.get_by_label("Search orders").fill(code)
+        page.wait_for_timeout(500)
+        ok(page.locator("tbody tr").count() == 1, "admin search filters to one row")
+        page.get_by_label("Search orders").fill("")
+        page.wait_for_timeout(400)
+
+        # designer filter
+        page.get_by_label("Filter by designer").select_option("unassigned")
+        page.wait_for_timeout(500)
+        page.get_by_label("Filter by designer").select_option("all")
+        page.wait_for_timeout(400)
+        ok(True, "admin designer filter works")
+
+        # open the order detail from the table
+        page.locator(f"a[href*='/admin/bookings/']").first.click()
+        page.wait_for_url("**/admin/bookings/**", timeout=10000)
+        page.wait_for_timeout(600)
+        ok("Client brief" in page.content(), "admin order detail shows client brief")
+        page.get_by_role("link", name=re.compile("Back to all orders")).click()
+        page.wait_for_url("**/admin", timeout=10000)
+        ok(True, "admin back link returns to /admin")
+
+        # a client account must not reach /admin
+        page.get_by_role("button", name="Sign out").click()
+        page.wait_for_url(f"{BASE}/", timeout=10000)
         page.goto(f"{BASE}/signup", wait_until="networkidle")
         page.get_by_label("Full name").fill("New Client")
         page.get_by_label("Email").fill("newclient@example.com")
@@ -226,6 +263,12 @@ def run():
         page.get_by_role("button", name="Sign up").click()
         page.wait_for_url("**/account/my-bookings", timeout=10000)
         ok("Welcome back" in page.content(), "signup creates a session")
+
+        # a signed-in client must be bounced off /admin
+        page.goto(f"{BASE}/admin", wait_until="networkidle")
+        page.wait_for_timeout(600)
+        ok("/admin" not in page.url, "client cannot open /admin")
+        ok("/account/my-bookings" in page.url, "client redirected to their account")
 
         page.goto(f"{BASE}/definitely-not-a-page", wait_until="networkidle")
         ok("404" in page.content(), "404 page renders")

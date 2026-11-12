@@ -17,7 +17,7 @@ import { defineConfig, type Plugin } from 'vite';
  * `vite.portal.config.ts` and point VITE_PORTAL_URL / VITE_SITE_URL at each
  * other (see README).
  */
-const PORTAL_PATH = /^\/(login|signup|track|account|dashboard)(\/|$|\?|#)/;
+const PORTAL_PATH = /^\/(login|signup|track|account|dashboard|admin)(\/|$|\?|#)/;
 
 function portalFallback(): Plugin {
   const rewrite = (req: { url?: string }) => {

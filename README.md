@@ -11,7 +11,7 @@ It ships as **two separate websites built from one repo**:
 | App | Entry | Routes | What it is |
 | --- | --- | --- | --- |
 | **Public website** | `index.html` → [`site/`](site/) | `/`, `/designers`, `/designer/:slug`, `/pricing`, `/contact`, `/book`, `/confirmation/:code` | Marketing, portfolio, pricing, contact and the booking flow |
-| **Client & designer portal** | `portal.html` → [`portal/`](portal/) | `/track`, `/login`, `/signup`, `/account/my-bookings`, `/dashboard`, `/dashboard/bookings/:id` | Tracking, client area and both designer dashboards |
+| **Client & designer portal** | `portal.html` → [`portal/`](portal/) | `/track`, `/login`, `/signup`, `/account/my-bookings`, `/dashboard`, `/dashboard/bookings/:id`, `/admin` | Tracking, client area, designer dashboards and the admin orders table |
 
 They share one data/auth layer in [`shared/`](shared/), one `package.json` and one Supabase
 project. By default both are served from a **single origin** (local dev, `npm run preview`,
@@ -61,6 +61,8 @@ Built with **React + TypeScript + Vite, Tailwind CSS, Supabase, React Router, Re
 | My bookings | `/account/my-bookings` | Status timeline, review submission once Completed |
 | Designer dashboard | `/dashboard` | Private: my bookings, unassigned pool, profile editor, pricing editor, reviews |
 | Booking detail | `/dashboard/bookings/:id` | Full brief, attachments, status control, internal notes, client contact |
+| Admin — all orders | `/admin` | Private: every booking from both designers + the pool, with search, status/designer filters and CSV export |
+| Admin order detail | `/admin/bookings/:id` | Same booking detail; admins can assign unassigned orders to either designer |
 
 Every navbar, footer and confirmation link crosses between the two apps through
 `portalUrl()` / `siteUrl()` in [`shared/lib/links.ts`](shared/lib/links.ts) — leave
@@ -117,11 +119,13 @@ with full seed data.
    **Authentication → Providers → Google**: add your OAuth client ID/secret to enable
    Google sign-in. Add `http://localhost:5173` and your production URL to the
    **Redirect URLs** list.
-6. **Authentication → Users → Invite user** for the two designer accounts:
+6. **Authentication → Users → Invite user** for the team accounts:
    - `markanti@duopixel.agency`
    - `sundar@duopixel.agency`
+   - `admin@duopixel.agency`
 
-   The dashboard maps those two emails to their designer automatically.
+   The dashboard maps the first two to their designer automatically, and the
+   admin email gets the **admin** role (sees every order at `/admin`).
 7. *(Optional, for confirmation emails)*
 
    ```bash
@@ -150,7 +154,7 @@ claiming an email was sent.
 | `npm run typecheck` | TypeScript check only |
 
 > **One origin or two?** `dist/` holds both apps behind one domain (default, and what
-> `npm run dev` / `npm run preview` use) — portal routes such as `/login` and `/dashboard` are
+> `npm run dev` / `npm run preview` use) — portal routes such as `/login`, `/dashboard` and `/admin` are
 > rewritten to `portal.html` by [`vercel.json`](vercel.json) / [`firebase.json`](firebase.json)
 > or the dev middleware in [`vite.config.ts`](vite.config.ts). Use `dist/site` + `dist/portal`
 > only when you host them on two domains, and set `VITE_PORTAL_URL` / `VITE_SITE_URL`
@@ -160,8 +164,9 @@ claiming an email was sent.
 ### End-to-end smoke test
 
 A Playwright script walks the whole product — booking flow, confirmation, tracking,
-designer login, pool claim, status change, dashboard edits, contact form, signup,
-404 and mobile nav — and fails on any assertion or console error:
+designer login, pool claim, status change, dashboard edits, admin login + the
+`/admin` orders table, contact form, signup, 404 and mobile nav — and fails on any
+assertion or console error:
 
 ```bash
 python -m pip install playwright && playwright install chromium
@@ -253,6 +258,7 @@ shown on the login screen:
 
 | Role | Email | Password |
 | --- | --- | --- |
+| Admin (all orders) | `admin@duopixel.agency` | `designer123` |
 | Designer (Markanti) | `markanti@duopixel.agency` | `designer123` |
 | Designer (Sundar) | `sundar@duopixel.agency` | `designer123` |
 | Client | sign up with any email | any 8+ characters |
@@ -268,7 +274,7 @@ shown on the login screen:
 | Website | Production URL | Notes |
 | --- | --- | --- |
 | Public website | `https://duo-pixel-agency.vercel.app` | `/`, `/designers`, `/pricing`, `/book`, … |
-| Client & designer portal | `https://duo-pixel-agency.vercel.app/portal` | also `/login`, `/signup`, `/track`, `/account/*`, `/dashboard/*` via rewrites |
+| Client & designer portal | `https://duo-pixel-agency.vercel.app/portal` | also `/login`, `/signup`, `/track`, `/account/*`, `/dashboard/*`, `/admin/*` via rewrites |
 
 `VITE_PORTAL_URL` and `VITE_SITE_URL` stay **empty** (same-origin): every link is
 relative, so the site and portal share `localStorage` demo data and no cross-origin setup
@@ -288,7 +294,7 @@ vercel --prod
 ### One domain (combined build)
 
 Both apps can also ship in a single `dist/`: the website at `/` and the portal behind
-`/login`, `/signup`, `/track`, `/account/*` and `/dashboard/*`.
+`/login`, `/signup`, `/track`, `/account/*`, `/dashboard/*` and `/admin`.
 
 ```bash
 npm run build          # dist/ (both apps) + dist/site + dist/portal
