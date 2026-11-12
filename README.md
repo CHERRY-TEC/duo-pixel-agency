@@ -64,6 +64,11 @@ Built with **React + TypeScript + Vite, Tailwind CSS, Supabase, React Router, Re
 | Admin — all orders | `/admin` | Private: every booking from both designers + the pool, with search, status/designer filters and CSV export |
 | Admin order detail | `/admin/bookings/:id` | Same booking detail; admins can assign unassigned orders to either designer |
 
+> **The admin is deliberately invisible on the website.** There is no `/admin`
+> link in the site header, mobile drawer or footer, and the login page does not
+> advertise the admin credentials — `/admin` is reached only by typing the URL
+> (and only the admin account gets past the login).
+
 Every navbar, footer and confirmation link crosses between the two apps through
 `portalUrl()` / `siteUrl()` in [`shared/lib/links.ts`](shared/lib/links.ts) — leave
 `VITE_PORTAL_URL` / `VITE_SITE_URL` empty for one origin, set them for two.
