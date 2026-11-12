@@ -57,13 +57,12 @@ function Navbar() {
     };
   }, [open]);
 
-  // Tracking, the client area, the designer dashboard and admin live in the portal app.
+  // The admin lives at /admin and is deliberately NOT linked from the public
+  // website — it is reached only by typing the URL. On the site an admin sees
+  // exactly what a signed-out visitor sees.
+  const isVisibleUser = Boolean(user) && user?.role !== 'admin';
   const accountHref = portalUrl(
-    user?.role === 'designer'
-      ? '/dashboard'
-      : user?.role === 'admin'
-        ? '/admin'
-        : '/account/my-bookings',
+    user?.role === 'designer' ? '/dashboard' : '/account/my-bookings',
   );
 
   return (
@@ -102,13 +101,13 @@ function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
-            {user ? (
+            {isVisibleUser ? (
               <>
                 <a
                   href={accountHref}
                   className="hidden rounded-full border border-ink-600 px-4 py-2 text-sm font-medium text-ink-100 transition hover:border-accent/50 hover:text-accent sm:inline-flex"
                 >
-                  {user.role === 'designer' ? 'Dashboard' : user.role === 'admin' ? 'Admin' : 'My Bookings'}
+                  {user?.role === 'designer' ? 'Dashboard' : 'My Bookings'}
                 </a>
                 <button
                   type="button"
@@ -185,18 +184,16 @@ function Navbar() {
                 ))}
                 <div className="mt-4 border-t border-ink-700 pt-4">
                   <a
-                    href={user ? accountHref : portalUrl('/track')}
+                    href={isVisibleUser ? accountHref : portalUrl('/track')}
                     className="block rounded-2xl px-4 py-3.5 text-base text-ink-200"
                   >
-                  {user
-                    ? user.role === 'designer'
-                      ? 'Designer dashboard'
-                      : user.role === 'admin'
-                        ? 'Admin — all orders'
+                    {isVisibleUser
+                      ? user?.role === 'designer'
+                        ? 'Designer dashboard'
                         : 'My Bookings'
-                    : 'Track a booking'}
+                      : 'Track a booking'}
                   </a>
-                  {!user && (
+                  {!isVisibleUser && (
                     <a
                       href={portalUrl('/login')}
                       className="block rounded-2xl px-4 py-3.5 text-base text-ink-200"
@@ -204,7 +201,7 @@ function Navbar() {
                       Log in / Sign up
                     </a>
                   )}
-                  {user && (
+                  {isVisibleUser && (
                     <button
                       type="button"
                       onClick={async () => {

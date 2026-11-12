@@ -148,10 +148,6 @@ export default function Login() {
               </p>
               <ul className="mt-2.5 space-y-1.5 font-mono text-xs text-ink-300">
                 <li>
-                  admin@duopixel.agency · designer123{' '}
-                  <span className="text-ink-500">(admin — all orders)</span>
-                </li>
-                <li>
                   markanti@duopixel.agency · designer123{' '}
                   <span className="text-ink-500">(designer dashboard)</span>
                 </li>

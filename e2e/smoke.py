@@ -47,6 +47,11 @@ def run():
         page.goto(BASE, wait_until="networkidle")
         ok("Tell us the website you want" in page.content(), "home hero renders")
         ok(page.locator("text=How it works").first.is_visible(), "how-it-works section")
+
+        # the admin is hidden from the public website: no link, no mention
+        ok(page.locator("a[href*='/admin']").count() == 0, "no /admin link on the site")
+        ok("admin@" not in page.content().lower(), "no admin email on the site")
+        ok("Admin — all orders" not in page.content(), "no admin label on the site")
         page.locator("a[href='/book']:visible").first.click()
         page.wait_for_url("**/book")
         ok(True, "Book a Design navigates to /book")
@@ -222,6 +227,8 @@ def run():
 
         # --------------------------------------------------- ADMIN ORDERS
         page.goto(f"{BASE}/login", wait_until="networkidle")
+        # admin credentials must not be advertised on the login page
+        ok("admin@duopixel.agency" not in page.content(), "login page hides admin credentials")
         page.get_by_label("Email").fill("admin@duopixel.agency")
         page.get_by_label("Password").fill("designer123")
         page.get_by_role("button", name="Log in").click()
